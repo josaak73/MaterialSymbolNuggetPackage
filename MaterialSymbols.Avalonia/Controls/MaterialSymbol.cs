@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Media;
+using System;
 
 namespace MaterialSymbols.Avalonia.Controls;
 
@@ -128,9 +128,19 @@ public class MaterialSymbol : Control
 
     protected override Size MeasureOverride(Size availableSize)
     {
-        var size = new Size(24, 24);
-        _pathIcon.Measure(availableSize);
-        return size;
+        var desiredSize = new Size(
+            double.IsNaN(Width) ? 24 : Width,
+            double.IsNaN(Height) ? 24 : Height
+        );
+        
+        // Constrain to available size
+        desiredSize = new Size(
+            Math.Min(desiredSize.Width, availableSize.Width),
+            Math.Min(desiredSize.Height, availableSize.Height)
+        );
+        
+        _pathIcon.Measure(desiredSize);
+        return desiredSize;
     }
 
     protected override Size ArrangeOverride(Size finalSize)
